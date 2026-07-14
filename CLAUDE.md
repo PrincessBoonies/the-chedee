@@ -150,8 +150,12 @@ Two similarly-named images are both intentionally in use, not a duplicate bug:
   committed), `backups/`, temp/scratch files, editor configs, OS junk.
 - `backups/index.html.pre-video.bak` and `backups/style.css.pre-video.bak` exist
   locally (pre-hero-video snapshot) as a manual safety net — not committed, purely local.
-- **Not yet deployed to a live URL.** Natural next step (offered, not yet done):
-  connect the GitHub repo to Vercel for a live URL + auto-deploy on push.
+- **Live on GitHub Pages**: https://princessboonies.github.io/the-chedee/
+  Auto-deploys from `master` on push (takes ~1 min to go live; hard-refresh to
+  beat the browser cache). Served from a **`/the-chedee/` subpath**, which is
+  exactly why all asset paths must stay relative (`assets/...`, never
+  `/assets/...`) — see gotcha #2. This is the URL the user checks results on,
+  from both phone and desktop.
 
 ## Other artifacts from this project
 
