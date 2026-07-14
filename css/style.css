@@ -168,6 +168,10 @@ h1,h2,h3,h4{
 }
 .on-dark .eyebrow{ color: var(--color-gold-light); }
 .on-dark .eyebrow::before{ background: var(--color-gold-light); }
+/* Heroes are always on a dark photo/video: the default deep brass is a light-bg
+   token and washes out against them. */
+.hero .eyebrow, .page-hero .eyebrow{ color: var(--color-gold-light); }
+.hero .eyebrow::before, .page-hero .eyebrow::before{ background: var(--color-gold-light); }
 
 .section-title{ font-size: var(--fs-3xl); font-weight: 400; }
 .section-lede{
@@ -549,7 +553,8 @@ body.nav-locked{ overflow: hidden; }
   animation: rise var(--dur-slow) var(--ease-out) 0.15s forwards;
 }
 .hero-title{
-  font-size: clamp(var(--fs-3xl), 6.4vw, var(--fs-5xl));
+  /* Min must stay well below the vw term or small screens clamp to the max-size floor. */
+  font-size: clamp(1.9rem, 6.4vw, var(--fs-5xl));
   font-weight: 300;
   max-width: 18ch;
   margin-block: var(--space-2) var(--space-3);
@@ -617,6 +622,33 @@ body.nav-locked{ overflow: hidden; }
 }
 @media (max-width: 767px){ .hero-scroll{ display: none; } }
 
+@media (max-width: 767px){
+  /* A landscape video in a 100dvh portrait frame crops hard and the heavy scrim
+     hides what's left — shorten the frame and lighten the top of the scrim. */
+  .hero{ min-height: 88dvh; }
+  .hero-inner{ padding-block: calc(var(--space-6) + 56px) var(--space-5); }
+  /* Keep the top of the frame clear so the video actually reads, then ramp the
+     scrim up behind the (bottom-aligned) copy. */
+  .hero.has-video::before{
+    background-image:
+      linear-gradient(180deg,
+        rgba(10,22,29,0.20) 0%,
+        rgba(10,22,29,0.32) 28%,
+        rgba(10,22,29,0.62) 55%,
+        rgba(10,22,29,0.90) 100%);
+  }
+  /* The video is a moving background: a scrim alone can't guarantee contrast on
+     every frame, so the copy carries its own shadow. */
+  .hero-eyebrow, .hero-title, .hero-sub{
+    text-shadow: 0 2px 16px rgba(10,22,29,0.65);
+  }
+  .hero-title{ max-width: 14ch; }
+  .hero-sub{ font-size: var(--fs-base); max-width: 38ch; margin-bottom: var(--space-3); }
+  .hero-actions{ gap: var(--space-1); }
+  .hero-actions .btn{ flex: 1 1 auto; justify-content: center; }
+  .hero-motif{ opacity: 0.08; }
+}
+
 .page-hero{
   position: relative;
   padding-block: calc(var(--space-8) + 40px) var(--space-6);
@@ -631,11 +663,17 @@ body.nav-locked{ overflow: hidden; }
 }
 .page-hero-inner{ position: relative; max-width: 60ch; }
 .page-hero-inner h1{
-  font-size: clamp(var(--fs-3xl), 5vw, var(--fs-4xl));
+  /* Min must stay well below the vw term or small screens clamp to the max-size floor. */
+  font-size: clamp(1.75rem, 5.4vw, var(--fs-4xl));
   font-weight: 300;
   margin-block: var(--space-2) var(--space-2);
 }
 .page-hero-inner p{ color: rgba(242,236,221,0.8); font-size: var(--fs-md); font-weight: 300; max-width: 50ch; }
+
+@media (max-width: 767px){
+  .page-hero{ padding-block: calc(var(--space-6) + 40px) var(--space-5); }
+  .page-hero-inner p{ font-size: var(--fs-base); }
+}
 
 .breadcrumb{
   display: flex; gap: 0.5em; align-items: center;
@@ -928,7 +966,18 @@ body.nav-locked{ overflow: hidden; }
   min-height: 220px;
   background: var(--color-ink);
 }
-@media (max-width: 819px){ .place-modal-media{ aspect-ratio: 16/10; } }
+@media (max-width: 819px){
+  /* Stacked layout: cap the photo so the text row keeps a usable scroll area. */
+  .place-modal-panel{
+    max-height: 92dvh;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+  .place-modal-media{
+    aspect-ratio: 16/9;
+    min-height: 0;
+    max-height: 30dvh;
+  }
+}
 .place-modal-media img{
   width: 100%;
   height: 100%;
@@ -942,6 +991,11 @@ body.nav-locked{ overflow: hidden; }
 .place-modal-content{
   padding: clamp(1.5rem, 3vw, 2.75rem);
   overflow-y: auto;
+  /* Grid items default to min-height:auto, which stops this row from shrinking:
+     the content then overflows the panel and gets clipped instead of scrolling. */
+  min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 .place-modal-content > *{
   opacity: 0;
@@ -959,7 +1013,16 @@ body.nav-locked{ overflow: hidden; }
 .place-modal.is-open .place-modal-content > *:nth-child(7){ animation-delay: 0.50s; }
 @keyframes modalRise{ to{ opacity: 1; transform: translateY(0); } }
 
-.place-modal-title{ font-size: var(--fs-2xl); font-weight: 400; margin-top: 0.4em; }
+.place-modal-title{
+  font-size: var(--fs-2xl);
+  font-weight: 400;
+  margin-top: 0.4em;
+  /* Long single words (e.g. RATCHANATDARAM) must break rather than overflow the panel. */
+  overflow-wrap: anywhere;
+}
+@media (max-width: 819px){
+  .place-modal-title{ font-size: var(--fs-xl); letter-spacing: 0.02em; }
+}
 .place-modal-lead{ color: var(--color-ink-soft); font-size: var(--fs-md); font-weight: 300; margin-top: var(--space-2); }
 .place-modal-sub{
   font-family: var(--font-body);
