@@ -1,0 +1,24 @@
+# ── Source material & working files (not needed by the live site) ──
+# Raw camera originals and source video exports. The site serves the
+# optimized copies under assets/ instead, so these stay out of the repo.
+Pic from Chedee/
+
+# Local backups and scratch/verification files
+backups/
+_*.html
+_*.txt
+_*.avif
+
+# ── Editor / tooling ──
+.claude/
+.vscode/
+.idea/
+*.code-workspace
+
+# ── OS junk ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Dependencies (in case any are added later) ──
+node_modules/
